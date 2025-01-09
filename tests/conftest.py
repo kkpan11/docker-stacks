@@ -78,8 +78,8 @@ class TrackedContainer:
         self.kwargs: Any = kwargs
 
     def run_detached(self, **kwargs: Any) -> Container:
-        """Runs a docker container using the preconfigured image name
-        and a mix of the preconfigured container options and those passed
+        """Runs a docker container using the pre-configured image name
+        and a mix of the pre-configured container options and those passed
         to this method.
 
         Keeps track of the docker.Container instance spawned to kill it
@@ -116,10 +116,8 @@ class TrackedContainer:
         logs = running_container.logs().decode("utf-8")
         assert isinstance(logs, str)
         LOGGER.debug(logs)
-        if no_warnings:
-            assert not self.get_warnings(logs)
-        if no_errors:
-            assert not self.get_errors(logs)
+        assert no_warnings == (not self.get_warnings(logs))
+        assert no_errors == (not self.get_errors(logs))
         assert no_failure == (rv["StatusCode"] == 0)
         return logs
 
