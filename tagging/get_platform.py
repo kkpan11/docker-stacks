@@ -6,11 +6,10 @@ ALL_PLATFORMS = {"x86_64", "aarch64"}
 
 
 def unify_aarch64(platform: str) -> str:
-    return {
-        "aarch64": "aarch64",
-        "arm64": "aarch64",  # To support local building on aarch64 Macs
-        "x86_64": "x86_64",
-    }[platform]
+    """
+    Renames arm64->aarch64 to support local builds on aarch64 Macs
+    """
+    return {"arm64": "aarch64"}.get(platform, platform)
 
 
 def get_platform() -> str:
