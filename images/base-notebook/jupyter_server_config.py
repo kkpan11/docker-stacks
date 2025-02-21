@@ -9,7 +9,8 @@ from pathlib import Path
 from jupyter_core.paths import jupyter_data_dir
 
 c = get_config()  # noqa: F821
-c.ServerApp.ip = "0.0.0.0"
+# Listen on all interfaces (ipv4 and ipv6)
+c.ServerApp.ip = ""
 c.ServerApp.open_browser = False
 
 # to output both image/svg+xml and application/pdf plot formats in the notebook file
@@ -34,7 +35,7 @@ if "GEN_CERT" in os.environ:
     if not cnf_file.exists():
         cnf_file.write_text(OPENSSL_CONFIG)
 
-    # Generate a certificate if one doesn't exist on disk
+    # Generate a certificate if one doesn't exist on a disk
     subprocess.check_call(
         [
             "openssl",

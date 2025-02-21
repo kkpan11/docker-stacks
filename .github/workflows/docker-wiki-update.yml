@@ -3,45 +3,54 @@ name: Download build manifests from GitHub artifacts and push them to GitHub wik
 # This way we make sure we don't access wiki pages from several jobs simultaneously
 
 env:
-  PUSH_TO_REGISTRY: (github.repository_owner == 'jupyter' || github.repository_owner == 'mathbunnyru') && (github.ref == 'refs/heads/main' || github.event_name == 'schedule')
+  PUSH_TO_REGISTRY: ${{ github.ref == 'refs/heads/main' || github.event_name == 'schedule' }}
 
 on:
   workflow_call:
 
 jobs:
   wiki-update:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
 
     steps:
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Create dev environment 📦
         uses: ./.github/actions/create-dev-env
 
-      - name: Download all manifests and history lines 📥
-        uses: ./.github/actions/download-manifests
+      - name: Download all history lines 📥
+        uses: actions/download-artifact@v4
         with:
-          histLineDir: /tmp/jupyter/hist_lines/
-          manifestDir: /tmp/jupyter/manifests/
-      - name: Display structure of downloaded files 🔍️
-        run: |
-          ls -R /tmp/jupyter/hist_lines/
-          ls -R /tmp/jupyter/manifests/
-        shell: bash
+          pattern: "*-history_line"
+          path: /tmp/jupyter/hist_lines/
+
+      - name: Download all manifests 📥
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-manifest"
+          path: /tmp/jupyter/manifests/
 
       - name: Checkout Wiki Repo 📃
         uses: actions/checkout@v4
         with:
           repository: ${{ github.repository }}.wiki
-          path: wiki/
+          path: wiki_src/
 
-      - name: Update wiki page 🏷
-        run: python3 -m tagging.update_wiki_page --wiki-dir wiki/ --hist-line-dir /tmp/jupyter/hist_lines/ --manifest-dir /tmp/jupyter/manifests/
+      - name: Update wiki 🏷
+        run: >
+          python3 -m wiki.update_wiki
+          --wiki-dir wiki_src/
+          --hist-lines-dir /tmp/jupyter/hist_lines/
+          --manifests-dir /tmp/jupyter/manifests/
+          --repository ${{ github.repository }}
         shell: bash
 
       - name: Push Wiki to GitHub 📤
-        if: env.PUSH_TO_REGISTRY
-        uses: stefanzweifel/git-auto-commit-action@8756aa072ef5b4a080af5dc8fef36c5d586e521d # v5.0.0
+        if: env.PUSH_TO_REGISTRY == 'true'
+        uses: stefanzweifel/git-auto-commit-action@e348103e9026cc0eee72ae06630dbe30c8bf7a79 # v5.1.0
         with:
           commit_message: "Automated wiki publish for ${{ github.sha }}"
-          repository: wiki/
+          repository: wiki_src/
