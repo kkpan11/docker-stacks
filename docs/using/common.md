@@ -15,14 +15,14 @@ You can pass [Jupyter Server options](https://jupyter-server.readthedocs.io/en/l
    you can run the following (this hash was generated for the `my-password` password):
 
    ```bash
-   docker run -it --rm -p 8888:8888 docker.io/jupyter/base-notebook \
+   docker run -it --rm -p 8888:8888 quay.io/jupyter/base-notebook \
        start-notebook.py --PasswordIdentityProvider.hashed_password='argon2:$argon2id$v=19$m=10240,t=10,p=8$JdAN3fe9J45NvK/EPuGCvA$O/tbxglbwRpOFuBNTYrymAEH6370Q2z+eS1eF4GM6Do'
    ```
 
 2. To set the [base URL](https://jupyter-server.readthedocs.io/en/latest/operators/public-server.html#running-the-notebook-with-a-customized-url-prefix) of the Jupyter Server, you can run the following:
 
    ```bash
-   docker run  -it --rm -p 8888:8888 docker.io/jupyter/base-notebook \
+   docker run -it --rm -p 8888:8888 quay.io/jupyter/base-notebook \
        start-notebook.py --ServerApp.base_url=/customized/url/prefix/
    ```
 
@@ -49,7 +49,12 @@ You do so by passing arguments to the `docker run` command.
       -e NB_USER="my-username" \
       -e CHOWN_HOME=yes \
       -w "/home/my-username" \
-      docker.io/jupyter/base-notebook
+      quay.io/jupyter/base-notebook
+  ```
+
+  ```{note}
+  If you set `NB_USER` to `root`, the `root` home dir will be set to `/home/root`.
+  See discussion [here](https://github.com/jupyter/docker-stacks/issues/2042).
   ```
 
 - `-e NB_UID=<numeric uid>` - Instructs the startup script to switch the numeric user ID of `${NB_USER}` to the given value.
@@ -57,8 +62,8 @@ You do so by passing arguments to the `docker run` command.
   This feature is useful when mounting host volumes with specific owner permissions.
   You **must** run the container with `--user root` for this option to take effect.
   (The startup script will `su ${NB_USER}` after adjusting the user ID.)
-  Instead, you might consider using the modern Docker-native options [`--user`](https://docs.docker.com/engine/reference/run/#user) and
-  [`--group-add`](https://docs.docker.com/engine/reference/run/#additional-groups) - see the last bullet in this section for more details.
+  Instead, you might consider using the modern Docker-native options [`--user`](https://docs.docker.com/engine/containers/run/#user) and
+  [`--group-add`](https://docs.docker.com/engine/containers/run/#additional-groups) - see the last bullet in this section for more details.
   See bullet points regarding `--user` and `--group-add`.
 
 - `-e NB_GID=<numeric gid>` - Instructs the startup script to change the primary group of `${NB_USER}` to `${NB_GID}`
@@ -146,7 +151,7 @@ For example, to mount a host folder containing a `notebook.key` and `notebook.cr
 ```bash
 docker run -it --rm -p 8888:8888 \
     -v /some/host/folder:/etc/ssl/notebook \
-    docker.io/jupyter/base-notebook \
+    quay.io/jupyter/base-notebook \
     start-notebook.py \
     --ServerApp.keyfile=/etc/ssl/notebook/notebook.key \
     --ServerApp.certfile=/etc/ssl/notebook/notebook.crt
@@ -158,7 +163,7 @@ For example:
 ```bash
 docker run -it --rm -p 8888:8888 \
     -v /some/host/folder/notebook.pem:/etc/ssl/notebook.pem \
-    docker.io/jupyter/base-notebook \
+    quay.io/jupyter/base-notebook \
     start-notebook.py \
     --ServerApp.certfile=/etc/ssl/notebook.pem
 ```
@@ -207,42 +212,44 @@ Example:
 docker run -it --rm \
     -p 8888:8888 \
     -e DOCKER_STACKS_JUPYTER_CMD=notebook \
-    docker.io/jupyter/base-notebook
-# Executing the command: jupyter notebook ...
+    quay.io/jupyter/base-notebook
+
+# Executing the command: start-notebook.py
+# Executing: jupyter notebook
+# ...
 
 # Use Jupyter NBClassic frontend
 docker run -it --rm \
     -p 8888:8888 \
     -e DOCKER_STACKS_JUPYTER_CMD=nbclassic \
-    docker.io/jupyter/base-notebook
-# Executing the command: jupyter nbclassic ...
+    quay.io/jupyter/base-notebook
+
+# Executing the command: start-notebook.py
+# Executing: jupyter nbclassic
+# ...
 ```
 
 ### `start.sh`
 
-The `start-notebook.py` script inherits most of its option handling capability from a more generic `start.sh` script.
-The `start.sh` script supports all the features described above but allows you to specify an arbitrary command to execute.
+Most of the configuration options in the `start-notebook.py` script are handled by an internal `start.sh` script that automatically runs before the command provided to the container
+(it's set as the container entrypoint).
+This allows you to specify an arbitrary command that takes advantage of all these features.
 For example, to run the text-based `ipython` console in a container, do the following:
 
 ```bash
-docker run -it --rm docker.io/jupyter/base-notebook start.sh ipython
+docker run -it --rm quay.io/jupyter/base-notebook ipython
 ```
 
 This script is handy when you derive a new Dockerfile from this image and install additional Jupyter applications with subcommands like `jupyter console`, `jupyter kernelgateway`, etc.
 
-### Others
-
-You can bypass the provided scripts and specify an arbitrary start command.
-If you do, keep in mind that features supported by the `start.sh` script and its kin will not function (e.g., `GRANT_SUDO`).
-
 ## Conda Environments
 
-The default Python 3.x [Conda environment](https://conda.io/projects/conda/en/latest/user-guide/concepts/environments.html) resides in `/opt/conda`.
+The default Python 3.x [Conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/concepts/environments.html) resides in `/opt/conda`.
 The `/opt/conda/bin` directory is part of the default `jovyan` user's `${PATH}`.
 That directory is also searched for binaries when run using `sudo` (`sudo my_binary` will search for `my_binary` in `/opt/conda/bin/`
 
 The `jovyan` user has full read/write access to the `/opt/conda` directory.
-You can use either `mamba`, `pip` or `conda` (`mamba` is recommended) to install new packages without any additional permissions.
+You can use either `mamba`, `pip`, or `conda` (`mamba` is recommended) to install new packages without any additional permissions.
 
 ```bash
 # install a package into the default (python 3.x) environment and cleanup it after
@@ -262,7 +269,7 @@ conda install --yes some-package && \
     fix-permissions "/home/${NB_USER}"
 ```
 
-### Using alternative channels
+### Using Alternative Channels
 
 Conda is configured by default to use only the [`conda-forge`](https://anaconda.org/conda-forge) channel.
 However, you can use alternative channels, either one-shot by overwriting the default channel in the installation command or by configuring `mamba` to use different channels.

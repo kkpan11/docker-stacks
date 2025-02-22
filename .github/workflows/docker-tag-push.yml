@@ -1,9 +1,9 @@
-name: Download Docker image and its tags from GitHub artifacts, apply them and push the image to the Registry
+name: Download a Docker image and its tags from GitHub artifacts, apply them, and push the image to the Registry
 
 env:
-  REGISTRY: docker.io
+  REGISTRY: quay.io
   OWNER: ${{ github.repository_owner }}
-  PUSH_TO_REGISTRY: (github.repository_owner == 'jupyter' || github.repository_owner == 'mathbunnyru') && (github.ref == 'refs/heads/main' || github.event_name == 'schedule')
+  PUSH_TO_REGISTRY: ${{ (github.repository_owner == 'jupyter' || github.repository_owner == 'mathbunnyru') && (github.ref == 'refs/heads/main' || github.event_name == 'schedule') }}
 
 on:
   workflow_call:
@@ -16,6 +16,14 @@ on:
         description: Image platform
         required: true
         type: string
+      variant:
+        description: Variant tag prefix
+        required: true
+        type: string
+      timeout-minutes:
+        description: Timeout in minutes
+        default: 25
+        type: number
     secrets:
       REGISTRY_USERNAME:
         required: true
@@ -24,7 +32,8 @@ on:
 
 jobs:
   tag-push:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ inputs.timeout-minutes }}
 
     steps:
       - name: Checkout Repo ⚡️
@@ -36,23 +45,35 @@ jobs:
         with:
           image: ${{ inputs.image }}
           platform: ${{ inputs.platform }}
+          variant: ${{ inputs.variant }}
 
       - name: Login to Registry 🔐
-        if: env.PUSH_TO_REGISTRY
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        if: env.PUSH_TO_REGISTRY == 'true'
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
         with:
+          registry: quay.io
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_TOKEN }}
 
       - name: Download tags file 📥
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.image }}-${{ inputs.platform }}-tags
+          name: ${{ inputs.image }}-${{ inputs.platform }}-${{ inputs.variant }}-tags
           path: /tmp/jupyter/tags/
       - name: Apply tags to the loaded image 🏷
-        run: python3 -m tagging.apply_tags --short-image-name ${{ inputs.image }} --tags-dir /tmp/jupyter/tags/ --platform ${{ inputs.platform }} --registry ${{ env.REGISTRY }} --owner ${{ env.OWNER }}
+        run: >
+          python3 -m tagging.apps.apply_tags
+          --registry ${{ env.REGISTRY }}
+          --owner ${{ env.OWNER }}
+          --image ${{ inputs.image }}
+          --variant ${{ inputs.variant }}
+          --platform ${{ inputs.platform }}
+          --tags-dir /tmp/jupyter/tags/
+      # This step is needed to prevent pushing non-multi-arch "latest" tag
+      - name: Remove the "latest" tag from the image 🗑️
+        run: docker image rmi ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ inputs.image }}:latest
 
       - name: Push Images to Registry 📤
-        if: env.PUSH_TO_REGISTRY
+        if: env.PUSH_TO_REGISTRY == 'true'
         run: docker push --all-tags ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ inputs.image }}
         shell: bash
