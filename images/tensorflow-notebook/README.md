@@ -1,8 +1,4 @@
-# Jupyter Notebook Deep Learning Stack
-
-[![docker pulls](https://img.shields.io/docker/pulls/jupyter/tensorflow-notebook.svg)](https://hub.docker.com/r/jupyter/tensorflow-notebook/)
-[![docker stars](https://img.shields.io/docker/stars/jupyter/tensorflow-notebook.svg)](https://hub.docker.com/r/jupyter/tensorflow-notebook/)
-[![image size](https://img.shields.io/docker/image-size/jupyter/tensorflow-notebook/latest)](https://hub.docker.com/r/jupyter/tensorflow-notebook/ "jupyter/tensorflow-notebook image size")
+# Jupyter Notebook TensorFlow Deep Learning Stack
 
 GitHub Actions in the <https://github.com/jupyter/docker-stacks> project builds and pushes this image to the Registry.
 

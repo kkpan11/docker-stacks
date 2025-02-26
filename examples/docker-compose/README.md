@@ -12,7 +12,7 @@ See the [installation instructions](https://docs.docker.com/engine/installation/
 
 ## Quickstart
 
-Build and run a `jupyter/minimal-notebook` container on a VirtualBox VM on local desktop.
+Build and run a `jupyter/minimal-notebook` image on a VirtualBox VM on local desktop.
 
 ```bash
 # create a Docker Machine-controlled VirtualBox VM
@@ -42,7 +42,7 @@ You can customize the docker-stack notebook image to deploy by modifying the `no
 For example, you can build and deploy a `jupyter/all-spark-notebook` by modifying the Dockerfile like so:
 
 ```dockerfile
-FROM docker.io/jupyter/all-spark-notebook
+FROM quay.io/jupyter/all-spark-notebook
 # Your RUN commands and so on
 ```
 

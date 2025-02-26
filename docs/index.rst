@@ -13,8 +13,10 @@ Table of Contents
    using/common
    using/specifics
    using/recipes
+   using/custom-images
    using/troubleshooting
    using/faq
+   using/changelog
 
 .. toctree::
    :maxdepth: 2
@@ -32,8 +34,9 @@ Table of Contents
    :maxdepth: 2
    :caption: Maintainer Guide
 
+   maintaining/new-images-and-packages-policy
+   maintaining/tagging
    maintaining/tasks
-   maintaining/aarch64-runner
 
 .. toctree::
    :maxdepth: 2

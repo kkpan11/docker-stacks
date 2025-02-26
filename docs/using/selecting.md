@@ -20,12 +20,12 @@ The following sections describe these images, including their contents, relation
 
 [Source on GitHub](https://github.com/jupyter/docker-stacks/tree/main/images/docker-stacks-foundation) |
 [Dockerfile commit history](https://github.com/jupyter/docker-stacks/commits/main/images/docker-stacks-foundation/Dockerfile) |
-[Docker Hub image tags](https://hub.docker.com/r/jupyter/docker-stacks-foundation/tags/)
+[Quay.io image tags](https://quay.io/repository/jupyter/docker-stacks-foundation?tab=tags)
 
 `jupyter/docker-stacks-foundation` is a small image supporting a majority of [options common across all core stacks](common.md).
 It is the basis for all other stacks on which Jupyter-related applications can be built
 (e.g., kernel-based containers, [nbclient](https://github.com/jupyter/nbclient) applications, etc.).
-As such, it does not contain application-level software like JupyterLab, Jupyter Notebook or JupyterHub.
+As such, it does not contain application-level software like JupyterLab, Jupyter Notebook, or JupyterHub.
 
 It contains:
 
@@ -34,8 +34,7 @@ It contains:
   - [mamba](https://github.com/mamba-org/mamba): "reimplementation of the conda package manager in C++". We use this package manager by default when installing packages.
 - Unprivileged user `jovyan` (`uid=1000`, configurable, [see options in the common features section](./common.md) of this documentation) in group `users` (`gid=100`)
   with ownership over the `/home/jovyan` and `/opt/conda` paths
-- `tini` as the container entry point
-- A `start.sh` script as the default command - useful for running alternative commands in the container as applications are added (e.g. `ipython`, `jupyter kernelgateway`, `jupyter lab`)
+- `tini` and a `start.sh` script as the container entry point - useful for running alternative commands in the container as applications are added (e.g. `ipython`, `jupyter kernelgateway`, `jupyter lab`)
 - A `run-hooks.sh` script, which can source/run files in a given directory
 - Options for a passwordless sudo
 - Common system libraries like `bzip2`, `ca-certificates`, `locales`
@@ -46,22 +45,22 @@ It contains:
 
 [Source on GitHub](https://github.com/jupyter/docker-stacks/tree/main/images/base-notebook) |
 [Dockerfile commit history](https://github.com/jupyter/docker-stacks/commits/main/images/base-notebook/Dockerfile) |
-[Docker Hub image tags](https://hub.docker.com/r/jupyter/base-notebook/tags/)
+[Quay.io image tags](https://quay.io/repository/jupyter/base-notebook?tab=tags)
 
-`jupyter/base-notebook` adds base Jupyter Applications like JupyterLab, Jupyter Notebook, JupyterHub and NBClassic
+`jupyter/base-notebook` adds base Jupyter Applications like JupyterLab, Jupyter Notebook, JupyterHub, and NBClassic
 and serves as the basis for all other stacks besides `jupyter/docker-stacks-foundation`.
 
 It contains:
 
 - Everything in `jupyter/docker-stacks-foundation`
 - Minimally functional Server (e.g., no LaTeX support for saving notebooks as PDFs)
-- `notebook`, `jupyterhub` and `jupyterlab` packages
+- `notebook`, `jupyterhub-singleuser`, and `jupyterlab` packages
 - A `start-notebook.py` script as the default command
 - A `start-singleuser.py` script useful for launching containers in JupyterHub
 - Options for a self-signed HTTPS certificate
 
 ```{warning}
-`jupyter/base-notebook` also contains `start-notebook.sh` and `start-singleuser.sh` files to maintain backwards compatibility.
+`jupyter/base-notebook` also contains `start-notebook.sh` and `start-singleuser.sh` files to maintain backward compatibility.
 External config that explicitly refers to those files should instead
 update to refer to `start-notebook.py` and `start-singleuser.py`.
 The shim `.sh` files will be removed at some future date.
@@ -71,7 +70,7 @@ The shim `.sh` files will be removed at some future date.
 
 [Source on GitHub](https://github.com/jupyter/docker-stacks/tree/main/images/minimal-notebook) |
 [Dockerfile commit history](https://github.com/jupyter/docker-stacks/commits/main/images/minimal-notebook/Dockerfile) |
-[Docker Hub image tags](https://hub.docker.com/r/jupyter/minimal-notebook/tags/)
+[Quay.io image tags](https://quay.io/repository/jupyter/minimal-notebook?tab=tags)
 
 `jupyter/minimal-notebook` adds command-line tools useful when working in Jupyter applications.
 
@@ -83,7 +82,7 @@ It contains:
   [git](https://git-scm.com/),
   [nano](https://www.nano-editor.org/) (actually `nano-tiny`),
   [tzdata](https://www.iana.org/time-zones),
-  [unzip](https://code.launchpad.net/ubuntu/+source/unzip)
+  [unzip](https://code.launchpad.net/ubuntu/+source/unzip),
   and [vi](https://www.vim.org) (actually `vim-tiny`),
 - [TeX Live](https://www.tug.org/texlive/) for notebook document conversion
 
@@ -91,7 +90,7 @@ It contains:
 
 [Source on GitHub](https://github.com/jupyter/docker-stacks/tree/main/images/r-notebook) |
 [Dockerfile commit history](https://github.com/jupyter/docker-stacks/commits/main/images/r-notebook/Dockerfile) |
-[Docker Hub image tags](https://hub.docker.com/r/jupyter/r-notebook/tags/)
+[Quay.io image tags](https://quay.io/repository/jupyter/r-notebook?tab=tags)
 
 `jupyter/r-notebook` includes popular packages from the R ecosystem listed below:
 
@@ -122,7 +121,7 @@ It contains:
 
 [Source on GitHub](https://github.com/jupyter/docker-stacks/tree/main/images/julia-notebook) |
 [Dockerfile commit history](https://github.com/jupyter/docker-stacks/commits/main/images/julia-notebook/Dockerfile) |
-[Docker Hub image tags](https://hub.docker.com/r/jupyter/julia-notebook/tags/)
+[Quay.io image tags](https://quay.io/repository/jupyter/julia-notebook?tab=tags)
 
 `jupyter/julia-notebook` includes popular packages from the Julia ecosystem listed below:
 
@@ -136,7 +135,7 @@ It contains:
 
 [Source on GitHub](https://github.com/jupyter/docker-stacks/tree/main/images/scipy-notebook) |
 [Dockerfile commit history](https://github.com/jupyter/docker-stacks/commits/main/images/scipy-notebook/Dockerfile) |
-[Docker Hub image tags](https://hub.docker.com/r/jupyter/scipy-notebook/tags/)
+[Quay.io image tags](https://quay.io/repository/jupyter/scipy-notebook?tab=tags)
 
 `jupyter/scipy-notebook` includes popular packages from the scientific Python ecosystem.
 
@@ -180,20 +179,32 @@ It contains:
 
 [Source on GitHub](https://github.com/jupyter/docker-stacks/tree/main/images/tensorflow-notebook) |
 [Dockerfile commit history](https://github.com/jupyter/docker-stacks/commits/main/images/tensorflow-notebook/Dockerfile) |
-[Docker Hub image tags](https://hub.docker.com/r/jupyter/tensorflow-notebook/tags/)
+[Quay.io image tags](https://quay.io/repository/jupyter/tensorflow-notebook?tab=tags)
 
 `jupyter/tensorflow-notebook` includes popular Python deep learning libraries.
 
 - Everything in `jupyter/scipy-notebook` and its ancestor images
-- [tensorflow](https://www.tensorflow.org/) machine learning library
+- [TensorFlow](https://www.tensorflow.org/) machine learning library
+- [Jupyter Server Proxy](https://jupyter-server-proxy.readthedocs.io/en/latest/) to support [TensorBoard](https://www.tensorflow.org/tensorboard)
+
+### jupyter/pytorch-notebook
+
+[Source on GitHub](https://github.com/jupyter/docker-stacks/tree/main/images/pytorch-notebook) |
+[Dockerfile commit history](https://github.com/jupyter/docker-stacks/commits/main/images/pytorch-notebook/Dockerfile) |
+[Quay.io image tags](https://quay.io/repository/jupyter/pytorch-notebook?tab=tags)
+
+`jupyter/pytorch-notebook` includes popular Python deep learning libraries.
+
+- Everything in `jupyter/scipy-notebook` and its ancestor images
+- [pytorch](https://pytorch.org/) machine learning library
 
 ### jupyter/datascience-notebook
 
 [Source on GitHub](https://github.com/jupyter/docker-stacks/tree/main/images/datascience-notebook) |
 [Dockerfile commit history](https://github.com/jupyter/docker-stacks/commits/main/images/datascience-notebook/Dockerfile) |
-[Docker Hub image tags](https://hub.docker.com/r/jupyter/datascience-notebook/tags/)
+[Quay.io image tags](https://quay.io/repository/jupyter/datascience-notebook?tab=tags)
 
-`jupyter/datascience-notebook` includes libraries for data analysis from the Python, and R, and Julia communities.
+`jupyter/datascience-notebook` includes libraries for data analysis from the Python, R, and Julia communities.
 
 - Everything in the `jupyter/scipy-notebook`, `jupyter/r-notebook`, and `jupyter/julia-notebook` images and their ancestor
   images
@@ -203,28 +214,40 @@ It contains:
 
 [Source on GitHub](https://github.com/jupyter/docker-stacks/tree/main/images/pyspark-notebook) |
 [Dockerfile commit history](https://github.com/jupyter/docker-stacks/commits/main/images/pyspark-notebook/Dockerfile) |
-[Docker Hub image tags](https://hub.docker.com/r/jupyter/pyspark-notebook/tags/)
+[Quay.io image tags](https://quay.io/repository/jupyter/pyspark-notebook?tab=tags)
 
 `jupyter/pyspark-notebook` includes Python support for Apache Spark.
 
 - Everything in `jupyter/scipy-notebook` and its ancestor images
 - [Apache Spark](https://spark.apache.org/) with Hadoop binaries
-- [pyarrow](https://arrow.apache.org/docs/python/) library
+- [grpcio-status](https://github.com/grpc/grpc/tree/master/src/python/grpcio_status)
+- [grpcio](https://grpc.io/docs/languages/python/quickstart/)
+- [pyarrow](https://arrow.apache.org/docs/python/)
 
 ### jupyter/all-spark-notebook
 
 [Source on GitHub](https://github.com/jupyter/docker-stacks/tree/main/images/all-spark-notebook) |
 [Dockerfile commit history](https://github.com/jupyter/docker-stacks/commits/main/images/all-spark-notebook/Dockerfile) |
-[Docker Hub image tags](https://hub.docker.com/r/jupyter/all-spark-notebook/tags/)
+[Quay.io image tags](https://quay.io/repository/jupyter/all-spark-notebook?tab=tags)
 
 `jupyter/all-spark-notebook` includes Python and R support for Apache Spark.
 
 - Everything in `jupyter/pyspark-notebook` and its ancestor images
 - [IRKernel](https://irkernel.github.io/) to support R code in Jupyter notebooks
 - [rcurl](https://cran.r-project.org/web/packages/RCurl/index.html),
-  [sparklyr](https://spark.rstudio.com),
+  [sparklyr](https://spark.posit.co),
   [ggplot2](https://ggplot2.tidyverse.org)
   packages
+
+### CUDA enabled variants
+
+We provide CUDA accelerated versions of the `pytorch-notebook` and `tensorflow-notebook` images.
+Prepend a CUDA prefix (versioned prefix like `cuda12-` for `pytorch-notebook` or just `cuda-` for `tensorflow-notebook`) to the image tag
+to allow PyTorch or TensorFlow operations to use compatible NVIDIA GPUs for accelerated computation.
+We only build `pytorch-notebook` for the last two major versions of CUDA.
+The `tensorflow-notebook` image only supports the latest CUDA version listed in the [officially tested build configurations](https://www.tensorflow.org/install/source#gpu).
+
+For example, you could use the image `quay.io/jupyter/pytorch-notebook:cuda12-python-3.11.8` or `quay.io/jupyter/tensorflow-notebook:cuda-latest`.
 
 ### Image Relationships
 
@@ -232,29 +255,30 @@ The following diagram depicts the build dependency tree of the core images. (i.e
 Any given image inherits the complete content of all ancestor images pointing to it.
 
 [![Image inheritance
-diagram](../images/inherit.svg)](http://interactive.blockdiag.com/?compression=deflate&src=eJyFjkFuwkAMRfecwsqKLuYACMEJuqPLSshJHDAZ7GjGIwSIuzPTRaWJWmX7_vP_br12Y894gucKoKcBk7fjoGKRHwQ72Gwz18AkhsYqGU0aLCDbdpWjJrVJLH3L-vPrADe2c85ZDAJ5wkgfDbg99HmFgouG3RjdoEn6n7ZS_l9W7trc4ESNWtWxyBUoxpWFr-grac6KFzue7pVVk-I0RhI1DF5vv7z5W80vYqYkHS1Oh0XjkjzjwnPTPU4Yxsqas-Kh925uvt4imKoO)
+diagram](../images/inherit.svg)](http://interactive.blockdiag.com/?compression=deflate&src=eJyFj0FqwzAQRfc5hfAqpYiS7kpoT9BdugyEsTxuplZmjDRqcEvvXinQggzGK8Gb97_4rRc3dATv5ntjTIc9JK-nXlgjfaF5Nk_7zCUQsoKScEajBA1Aut_kU5PaxJqOvH19O5gr6TnfidUE9AgR7xpjX0yXf8Fgo4Ibou0lcXdrK-VLt5Jrc4NlUWxFhiJXoBgXYrqAr6Q5K150NE6VVZPiNIocJfRerv_8yPcudWA-IRCwNgvJcVIJ7jyP7XYPt-fxLx8XCvJkyBTZ4eqUsGp8JE-wMnac4ghhqKw5Kx54b-fmzy_M3cYh)
 
 ### Builds
 
-Every Monday and whenever a pull request is merged, images are rebuilt and pushed to [the public container registry](https://hub.docker.com/u/jupyter).
+Every Monday and whenever a pull request is merged, images are rebuilt and pushed to [the public container registry](https://quay.io/organization/jupyter).
 
 ### Versioning via image tags
 
 Whenever a docker image is pushed to the container registry, it is tagged with:
 
-- a `latest` tag
+- the `latest` tag
 - a 12-character git commit SHA like `1ffe43816ba9`
 - a date formatted like `2023-01-30`
 - OS version like `ubuntu-22.04`
 - a set of software version tags like `python-3.10.8` and `lab-3.5.3`
 
 ```{warning}
-- Tags before `2022-07-05` were sometimes incorrect. Please, do not rely on them.
-- Single-platform images have either `aarch64` or `x86_64` tag prefixes, for example, `jupyter/base-notebook:aarch64-python-3.10.5`
+- Tags before `2022-07-05` were sometimes incorrect.
+  Please, do not rely on them.
+- Single-platform images have either `aarch64-` or `x86_64-` tag prefixes, for example, `quay.io/jupyter/base-notebook:aarch64-python-3.11.6`
 ```
 
 For stability and reproducibility, you should either reference a date formatted
-tag from a date before the current date (in UTC time) or a git commit SHA older
+tag from a date before the current date (in UTC) or a git commit SHA older
 than the latest git commit SHA in the default branch of the
 [jupyter/docker-stacks GitHub repository](https://github.com/jupyter/docker-stacks/).
 
@@ -304,15 +328,18 @@ See the [contributing guide](../contributing/stacks.md) for information about ho
 [almond]: https://almond.sh
 [almond_b]: https://mybinder.org/v2/gh/almond-sh/examples/master?urlpath=lab%2Ftree%2Fnotebooks%2Findex.ipynb
 
-### GPU accelerated notebooks
+### Other GPU-accelerated notebooks
 
-| Flavor             | Description                                                                                                                                                                                                                                                                                                                                                 |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [GPU-Jupyter][gpu] | Power of your NVIDIA GPU and GPU calculations using Tensorflow and Pytorch in collaborative notebooks. This is done by generating a Dockerfile that consists of the **nvidia/cuda** base image, the well-maintained **docker-stacks** that is integrated as a submodule and GPU-able libraries like **Tensorflow**, **Keras** and **PyTorch** on top of it. |
-| [PRP-GPU][prp_gpu] | PRP (Pacific Research Platform) maintained [registry][prp_reg] for jupyter stack based on NVIDIA CUDA-enabled image. Added the PRP image with Pytorch and some other python packages and GUI Desktop notebook based on <https://github.com/jupyterhub/jupyter-remote-desktop-proxy>.                                                                        |
-| [b-data][b-data]   | GPU accelerated, multi-arch (`linux/amd64`, `linux/arm64/v8`) docker images for [R][r_cuda], [Python][python_cuda] and [Julia][julia_cuda]. Derived from nvidia/cuda `devel`-flavored images, including TensortRT and TensorRT plugin libraries. With [code-server][code-server] next to JupyterLab. Just Python – no [Conda][conda]/[Mamba][mamba].        |
+| Flavor                            | Description                                                                                                                                                                                                                                                                                                                                                  |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [GPU-Jupyter][gpu]                | Power of your NVIDIA GPU and GPU calculations using Tensorflow and Pytorch in collaborative notebooks. This is done by generating a Dockerfile that consists of the **nvidia/cuda** base image, the well-maintained **docker-stacks** that is integrated as a submodule, and GPU-able libraries like **Tensorflow**, **Keras** and **PyTorch** on top of it. |
+| [myLab TH Lübeck Images][gpu_thl] | Images based on the **jupyter/docker-stacks**, built and maintained at the [myLab TH Lübeck][gpu_mylab] using build scripts similar to iot-salzburg. Several images include GPU libraries.                                                                                                                                                                   |
+| [PRP-GPU][prp_gpu]                | PRP (Pacific Research Platform) maintained [registry][prp_reg] for jupyter stack based on NVIDIA CUDA-enabled image. Added the PRP image with Pytorch and some other Python packages and GUI Desktop notebook based on <https://github.com/jupyterhub/jupyter-remote-desktop-proxy>.                                                                         |
+| [b-data][b-data]                  | GPU accelerated, multi-arch (`linux/amd64`, `linux/arm64/v8`) docker images for [R][r_cuda], [Python][python_cuda] and [Julia][julia_cuda]. Derived from nvidia/cuda `devel`-flavored images, including TensortRT and TensorRT plugin libraries. With [code-server][code-server] next to JupyterLab. Just Python – no [Conda][conda]/[Mamba][mamba].         |
 
 [gpu]: https://github.com/iot-salzburg/gpu-jupyter
+[gpu_thl]: https://hub.docker.com/r/hanseware/jlab-images
+[gpu_mylab]: https://mylab.th-luebeck.de
 [prp_gpu]: https://gitlab.nrp-nautilus.io/prp/jupyter-stack/-/tree/prp
 [prp_reg]: https://gitlab.nrp-nautilus.io/prp/jupyter-stack/container_registry
 [b-data]: https://github.com/b-data
